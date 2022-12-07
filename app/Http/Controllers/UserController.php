@@ -3,20 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UserStoreRequest;
+use App\Http\Requests\UserUpdateRequest;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function index(): View
     {
-        //
+        return view('user.index', [
+            'user' => User::all(),
+        ]);
     }
 
     public function create(): View
@@ -24,11 +22,11 @@ class UserController extends Controller
         return view('user.create');
     }
 
-    public function store(UserStoreRequest $request)
+    public function store(UserStoreRequest $request): RedirectResponse
     {
         User::create([
-            'name' => $request->email,
-            'password' => $request->email,
+            'name' => $request->name,
+            'password' => $request->password,
             'email' => $request->email,
         ]);
 
@@ -37,48 +35,28 @@ class UserController extends Controller
             ->with('message', 'Vartotojas sekmingai sukurtas');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
-     */
-    public function show(User $user)
+    public function show(User $user): View
     {
-
+        return view('user.show', compact('user'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(User $user)
+    public function edit(User $user): View
     {
-        //
+        return view('user.edit', compact('user'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, User $user)
+    public function update(UserUpdateRequest $request, User $user): RedirectResponse
     {
-        //
+        $user->update($request->validated());
+
+        return redirect()->route('user.edit', $user->id)
+            ->with('message', 'Vartotojas sekmingai atnaujintas');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(User $user)
+    public function destroy(User $user): RedirectResponse
     {
-        //
+        $user->delete();
+
+        return redirect()->route('user.index');
     }
 }
