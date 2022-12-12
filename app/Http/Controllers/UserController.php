@@ -37,6 +37,7 @@ class UserController extends Controller
 
     public function show(User $user): View
     {
+        $user->load('orders.items');
         return view('user.show', compact('user'));
     }
 

@@ -5,3 +5,6 @@ php artisan make:migration CreateUsersTable
 
 Validacijos klasė
 php artisan make:request UserStoreRequest
+
+Keleta testu paruosti
+Http request types, why so many?

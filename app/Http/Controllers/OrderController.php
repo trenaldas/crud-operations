@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\OrderStoreRequest;
 use App\Http\Requests\OrderUpdateRequest;
+use App\Models\Item;
 use App\Models\Order;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -21,7 +22,11 @@ class OrderController extends Controller
 
     public function store(OrderStoreRequest $request): RedirectResponse
     {
-        Order::create($request->validated());
+        $order = Order::create($request->validated());
+
+        Item::factory()->count(rand(10, 15))->create([
+            'order_id' => $order->id,
+        ]);
 
         return redirect()->route('order.index');
     }
@@ -35,6 +40,7 @@ class OrderController extends Controller
 
     public function show(Order $order): View
     {
+        $order->load('items.order', 'items.order.user');
         return view('order.show', [
             'order' => $order,
         ]);
