@@ -48,6 +48,7 @@ class OrderController extends Controller
 
     public function destroy(Order $order): RedirectResponse
     {
+        $order->items()->delete();
         $order->delete();
         return redirect()->route('order.index');
     }
